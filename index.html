@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090d16"><title>MARVEL ATLAS｜漫威人物宇宙</title>
+<style>
+:root{color-scheme:dark;--bg:#090d16;--panel:#111a29;--line:#29384e;--muted:#9aa9bd;--red:#e62429;--gold:#e6b85c}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#26344d 0,#0b111d 48%,#070a10 100%);color:#edf2fa;font-family:Inter,"Noto Sans TC",system-ui,sans-serif}
+header{padding:25px clamp(16px,4vw,52px);border-bottom:1px solid var(--line);background:#090d16dc}.eyebrow{font-size:11px;letter-spacing:.25em;color:#ff777b;font-weight:800}h1{font-size:clamp(28px,4vw,48px);margin:7px 0}.subtitle{color:var(--muted);font-size:13px}
+main{max-width:1600px;margin:auto;padding:18px clamp(12px,3vw,38px) 45px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+input,select,button{background:#121d2d;color:#edf2fa;border:1px solid #35445c;border-radius:10px;padding:10px 12px;font:inherit}input{flex:1;min-width:220px}button{cursor:pointer}button:hover{border-color:#f36b70}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}.graphbox,.detail,.index{background:linear-gradient(145deg,#121c2b,#0e1522);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.graphhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line);font-size:12px;flex-wrap:wrap}.legend{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+#graph{display:block;width:100%;height:690px;touch-action:none}.edge{stroke:#8291a8;stroke-width:1.4;opacity:.42}.edge.family{stroke:#e6b85c;stroke-width:2}.edge.team{stroke:#68aaff}.edge.enemy{stroke:#f06a74;stroke-dasharray:5 4}.edge.mentor{stroke:#61c7a0;stroke-dasharray:2 4}.edge.love{stroke:#f18bb5;stroke-width:2}.edge-label{fill:#b4c0d1;font-size:9px;text-anchor:middle;paint-order:stroke;stroke:#101827;stroke-width:3px}.node{cursor:pointer}.node circle{stroke:#eaf1fb;stroke-width:1.3}.node text{fill:#edf2fa;font-size:10px;text-anchor:middle;font-weight:650;paint-order:stroke;stroke:#0c121e;stroke-width:3px}.node.selected circle{stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 8px #e62429)}.node.dim{opacity:.13}
+.detail{padding:18px;min-height:690px}.kicker{font-size:11px;color:#ff777b;letter-spacing:.12em;font-weight:800}.detail h2{font-size:22px;margin:7px 0 2px}.english{font-size:12px;color:#9eacc0}.detail p{font-size:13px;line-height:1.8;color:#c7d1df}.section{font-size:11px;color:#91a2bb;letter-spacing:.12em;font-weight:800;margin:20px 0 8px}.pill{display:inline-block;padding:4px 8px;border:1px solid #3a4a63;background:#243149;border-radius:30px;font-size:10px;margin:3px}.rel{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #29364b;font-size:12px;cursor:pointer}.rel:hover{color:#ff9699}.rel small{color:#9aa9bd}.stats{display:flex;gap:8px;margin-top:14px}.stat{flex:1;background:#0b1320;border:1px solid #29384e;padding:10px;border-radius:10px}.stat b{display:block;font-size:20px}.stat span{font-size:10px;color:var(--muted)}
+.index{display:none;padding:16px;margin-top:14px}.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px}.person{padding:10px;background:#19263a;border:1px solid #30415b;border-radius:9px;cursor:pointer}.person:hover{border-color:#f36b70}.person b{display:block;font-size:13px}.person small{color:var(--muted)}
+footer{color:#8291a8;font-size:11px;line-height:1.8;margin-top:16px}
+@media(max-width:950px){.layout{grid-template-columns:1fr}#graph{height:570px}.detail{min-height:unset}}@media(max-width:560px){input{min-width:100%}#graph{height:480px}}
+</style></head><body>
+<header><div class="eyebrow">THE MARVEL CINEMATIC UNIVERSE · INTERACTIVE DATABASE</div><h1>MARVEL <span style="color:#ef4148">ATLAS</span></h1><div class="subtitle">漫威電影宇宙人物關係資料庫｜角色・陣營・家族・盟友・宿敵</div></header>
+<main><div class="toolbar"><input id="q" placeholder="搜尋角色中英文名稱…"><select id="team"><option value="all">所有陣營</option><option>復仇者</option><option>星際異攻隊</option><option>瓦干達</option><option>蜘蛛人宇宙</option><option>魔法與宇宙</option><option>反派</option><option>新世代</option><option>其他</option></select><select id="kind"><option value="all">所有關係</option><option value="family">家人</option><option value="love">感情</option><option value="team">隊友／盟友</option><option value="mentor">師徒</option><option value="enemy">敵對</option><option value="work">組織／合作</option></select><button id="reset">重置</button><button id="toggle">角色索引</button></div>
+<div class="layout"><section class="graphbox"><div class="graphhead"><b>CHARACTER CONNECTION MAP｜人物關係網</b><div class="legend"><span>🔴 復仇者</span><span>🔵 星際</span><span>🟢 瓦干達</span><span>🟣 魔法</span><span>🟡 其他</span></div></div><svg id="graph" viewBox="0 0 1000 680" aria-label="漫威人物關係圖"></svg></section>
+<aside class="detail" id="detail"><div class="kicker">CHARACTER PROFILE</div><h2>選擇一位角色</h2><p>點擊關係圖上的人物節點，查看角色背景、代表作品與直接人物關係。也可以使用搜尋和篩選器探索。</p><div class="stats"><div class="stat"><b id="pc">0</b><span>角色</span></div><div class="stat"><b id="ec">0</b><span>關係</span></div></div><div class="section">探索方式</div><p>選中角色後，關係網會突出顯示與他直接相連的人物。點擊關係列表中的名字，可以繼續探索。</p></aside></div>
+<section class="index" id="index"><div class="section" style="margin-top:0">角色索引</div><div class="people" id="people"></div></section>
+<footer>資料範圍：MCU 電影、Disney+ 影集及相關多重宇宙作品。人物關係以已上映劇情為基礎整理；部分支線角色、變體與跨作品連結仍會持續擴充。角色及作品名稱屬其權利人所有，本網站為非官方粉絲資料整理。</footer></main>
+<script>
+const P=[
+['tony','東尼・史塔克','Tony Stark / Iron Man','復仇者','天才發明家、初代復仇者核心成員。','鋼鐵人系列、復仇者系列、蜘蛛人系列'],
+['steve','史蒂夫・羅傑斯','Steve Rogers / Captain America','復仇者','二戰超級士兵，初代復仇者領袖。','美國隊長系列、復仇者系列'],
+['nat','娜塔莎・羅曼諾夫','Natasha Romanoff / Black Widow','復仇者','前神盾局特工、初代復仇者。','復仇者系列、黑寡婦'],
+['clint','克林特・巴頓','Clint Barton / Hawkeye','復仇者','神盾局特工與弓箭手。','復仇者系列、鷹眼'],
+['bruce','布魯斯・班納','Bruce Banner / Hulk','復仇者','物理學家，伽瑪實驗使他能變身浩克。','無敵浩克、復仇者系列、女浩克'],
+['thor','索爾','Thor','復仇者','阿斯嘉王子與雷神，奧丁之子。','雷神系列、復仇者系列'],
+['rhodey','詹姆斯・羅德斯','James Rhodes / War Machine','復仇者','東尼的好友、美國空軍軍官。','鋼鐵人系列、復仇者系列'],
+['sam','山姆・威爾遜','Sam Wilson / Captain America','復仇者','退役空軍救援兵，接下美國隊長盾牌。','美國隊長2、獵鷹與酷寒戰士、美國隊長：無畏新世界'],
+['bucky','巴奇・巴恩斯','Bucky Barnes / Winter Soldier','復仇者','史蒂夫的摯友，曾遭九頭蛇控制。','美國隊長系列、獵鷹與酷寒戰士'],
+['wanda','汪達・馬克希莫夫','Wanda Maximoff / Scarlet Witch','復仇者','擁有強大混沌魔法的復仇者。','復仇者系列、汪達幻視、奇異博士2'],
+['vision','幻視','Vision','復仇者','由心靈寶石與史塔克等人的技術促成的合成人。','復仇者系列、汪達幻視'],
+['peter','彼得・帕克','Peter Parker / Spider-Man','蜘蛛人宇宙','受到東尼提攜的紐約高中生英雄。','美國隊長3、復仇者系列、蜘蛛人系列'],
+['pepper','佩珀・波茲','Pepper Potts','其他','東尼的重要夥伴，後成為他的家人。','鋼鐵人系列、復仇者系列'],
+['happy','哈皮・霍根','Happy Hogan','其他','史塔克企業安全主管，後來照應彼得。','鋼鐵人系列、蜘蛛人系列'],
+['fury','尼克・福瑞','Nick Fury','其他','神盾局前局長，推動復仇者計畫。','鋼鐵人、復仇者系列、驚奇隊長、秘密入侵'],
+['loki','洛基','Loki','魔法與宇宙','阿斯嘉王子、索爾的養弟，時間變異管理局故事核心。','雷神系列、復仇者系列、洛基'],
+['odin','奧丁','Odin','魔法與宇宙','阿斯嘉眾神之父，索爾與海拉的父親。','雷神系列'],
+['hela','海拉','Hela','反派','死亡女神，奧丁的長女。','雷神索爾3：諸神黃昏'],
+['frigga','弗麗嘉','Frigga','魔法與宇宙','阿斯嘉王后，索爾的母親、洛基的養母。','雷神系列、復仇者：終局之戰'],
+['valkyrie','女武神','Valkyrie','魔法與宇宙','阿斯嘉戰士，後成為新阿斯嘉領導者。','雷神系列'],
+['strange','史蒂芬・史傳奇','Stephen Strange / Doctor Strange','魔法與宇宙','至尊法師，守護地球免受魔法威脅。','奇異博士系列、復仇者系列、蜘蛛人：無家日'],
+['wong','王','Wong','魔法與宇宙','卡瑪泰姬的重要守護者，後任至尊法師。','奇異博士系列、尚氣、女浩克'],
+['ancient','古一','The Ancient One','魔法與宇宙','史傳奇的導師，曾任至尊法師。','奇異博士、復仇者：終局之戰'],
+['quill','彼得・奎爾','Peter Quill / Star-Lord','星際異攻隊','星際異攻隊隊長，地球人與天神族血脈。','星際異攻隊系列、復仇者：無限之戰／終局之戰'],
+['gamora','葛摩菈','Gamora','星際異攻隊','薩諾斯養女，星際異攻隊成員。','星際異攻隊系列、復仇者系列'],
+['nebula','涅布拉','Nebula','星際異攻隊','葛摩菈的妹妹，曾被薩諾斯改造。','星際異攻隊系列、復仇者系列'],
+['rocket','火箭浣熊','Rocket','星際異攻隊','基因改造浣熊，星際異攻隊成員。','星際異攻隊系列'],
+['groot','格魯特','Groot','星際異攻隊','樹人，火箭的重要夥伴。','星際異攻隊系列'],
+['drax','德克斯','Drax','星際異攻隊','星際異攻隊成員。','星際異攻隊系列'],
+['mantis','螳螂女','Mantis','星際異攻隊','具有情緒感知能力的星際異攻隊成員。','星際異攻隊系列'],
+['yondu','勇度','Yondu Udonta','星際異攻隊','掠奪者首領，養育彼得・奎爾。','星際異攻隊系列'],
+['tchalla','帝查拉','T’Challa / Black Panther','瓦干達','瓦干達國王與黑豹。','美國隊長3、黑豹、復仇者系列'],
+['shuri','舒莉','Shuri','瓦干達','瓦干達公主、天才發明家。','黑豹系列、復仇者系列'],
+['ramonda','拉瑪達','Ramonda','瓦干達','瓦干達王后，帝查拉與舒莉的母親。','黑豹系列'],
+['okoye','奧科耶','Okoye','瓦干達','朵拉・米拉潔將軍，忠於瓦干達。','黑豹系列、復仇者系列'],
+['mbaku','恩巴庫','M’Baku','瓦干達','賈巴里部族領袖，瓦干達重要盟友。','黑豹系列、復仇者系列'],
+['killmonger','齊爾蒙格','Erik Killmonger','反派','與帝查拉爭奪王位的對手。','黑豹'],
+['may','梅姨','May Parker','蜘蛛人宇宙','彼得・帕克的姨媽與重要家人。','蜘蛛人系列'],
+['mj','MJ','Michelle Jones-Watson','蜘蛛人宇宙','彼得的同學與重要夥伴。','蜘蛛人系列'],
+['ned','奈德','Ned Leeds','蜘蛛人宇宙','彼得的好友，知曉他的英雄身分。','蜘蛛人系列'],
+['vulture','禿鷹','Adrian Toomes / Vulture','反派','蜘蛛人早期面對的對手。','蜘蛛人：返校日'],
+['mysterio','神秘客','Quentin Beck / Mysterio','反派','利用幻象技術操控輿論的對手。','蜘蛛人：離家日'],
+['thanos','薩諾斯','Thanos','反派','企圖以無限寶石改變宇宙命運的泰坦人。','復仇者：無限之戰／終局之戰'],
+['ultron','奧創','Ultron','反派','由東尼與布魯斯參與創造、後失控的人工智慧。','復仇者：奧創紀元'],
+['zemo','齊莫','Helmut Zemo','反派','索科維亞事件後策畫復仇者分裂。','美國隊長3、獵鷹與酷寒戰士'],
+['yelena','葉蓮娜・貝洛娃','Yelena Belova','新世代','娜塔莎的妹妹、受紅房訓練的黑寡婦。','黑寡婦、鷹眼'],
+['kate','凱特・畢夏普','Kate Bishop','新世代','年輕弓箭手，與克林特合作。','鷹眼'],
+['kamala','卡瑪拉・克汗','Kamala Khan / Ms. Marvel','新世代','新澤西少女英雄，驚奇隊長粉絲。','驚奇少女、驚奇隊長2'],
+['monica','莫妮卡・藍博','Monica Rambeau','新世代','瑪麗亞的女兒，擁有能量操控能力。','汪達幻視、驚奇隊長2'],
+['carol','卡蘿・丹佛斯','Carol Danvers / Captain Marvel','新世代','宇宙級英雄，與藍博家族有深厚連結。','驚奇隊長、復仇者：終局之戰、驚奇隊長2'],
+['scott','史考特・朗恩','Scott Lang / Ant-Man','新世代','前竊賊，成為蟻人並參與復仇者行動。','蟻人系列、復仇者：終局之戰'],
+['hope','荷普・范戴茵','Hope van Dyne / Wasp','新世代','珍娜與漢克・皮姆的女兒。','蟻人系列'],
+['hank','漢克・皮姆','Hank Pym','其他','量子領域研究先驅，初代蟻人。','蟻人系列'],
+['janet','珍娜・范戴茵','Janet van Dyne','其他','初代黃蜂女，曾被困量子領域。','蟻人系列'],
+['shang','尚氣','Shang-Chi','新世代','十環幫傳承相關的武術高手。','尚氣與十環傳奇'],
+['wenwu','徐文武','Xu Wenwu','反派','尚氣的父親、十環幫首領。','尚氣與十環傳奇'],
+['deadpool','死侍','Wade Wilson / Deadpool','其他','來自福斯 X 戰警電影宇宙的反英雄。','死侍與金鋼狼'],
+['wolverine','金鋼狼','Logan / Wolverine','其他','來自福斯 X 戰警電影宇宙的變體角色。','X 戰警系列、死侍與金鋼狼'],
+['reed','李德・理查斯','Reed Richards / Mister Fantastic','其他','驚奇四超人的領袖。','驚奇4超人：第一步']
+];
+const E=[
+['tony','pepper','感情／家人','love'],['tony','rhodey','摯友','team'],['tony','peter','導師','mentor'],['tony','happy','夥伴','work'],['tony','bruce','共同研究','work'],['tony','steve','戰友','team'],['tony','fury','復仇者計畫','work'],['tony','ultron','創造參與','work'],['tony','thanos','宿敵','enemy'],
+['steve','bucky','摯友','family'],['steve','sam','戰友／傳承','mentor'],['steve','nat','戰友','team'],['steve','thor','戰友','team'],['nat','clint','摯友','team'],['nat','yelena','姊妹','family'],['clint','kate','導師／搭檔','mentor'],
+['thor','loki','兄弟','family'],['odin','thor','父子','family'],['odin','loki','養父子','family'],['odin','hela','父女','family'],['frigga','thor','母子','family'],['frigga','loki','養母子','family'],['thor','valkyrie','盟友','team'],
+['wanda','vision','感情','love'],['vision','tony','創造參與者','work'],['strange','wong','同門／盟友','team'],['strange','ancient','師徒','mentor'],['strange','peter','合作','team'],
+['quill','gamora','感情','love'],['quill','yondu','養父子','family'],['gamora','nebula','姊妹','family'],['rocket','groot','夥伴','team'],['rocket','drax','隊友','team'],['rocket','mantis','隊友','team'],['quill','rocket','隊友','team'],['thanos','gamora','養父女','family'],['thanos','nebula','養父女','family'],
+['tchalla','shuri','兄妹','family'],['tchalla','ramonda','母子','family'],['shuri','ramonda','母女','family'],['tchalla','okoye','國王與將軍','work'],['tchalla','mbaku','盟友','team'],['killmonger','tchalla','堂兄弟／敵對','enemy'],
+['peter','may','姪子與姨媽','family'],['peter','mj','感情','love'],['peter','ned','好友','team'],['peter','happy','照應者','mentor'],['peter','vulture','敵對','enemy'],['peter','mysterio','敵對','enemy'],
+['scott','hope','感情／搭檔','love'],['scott','hank','師徒','mentor'],['hope','hank','父女','family'],['hope','janet','母女','family'],['hank','janet','夫妻','love'],
+['carol','monica','家人／夥伴','family'],['monica','kamala','隊友','team'],['carol','kamala','隊友','team'],['shang','wenwu','父子','family'],['deadpool','wolverine','搭檔','team'],['zemo','bucky','合作／衝突','work'],['zemo','sam','合作','work']
+];
+const colors={'復仇者':'#e62429','星際異攻隊':'#4f9cf7','瓦干達':'#54b89a','蜘蛛人宇宙':'#dfad55','魔法與宇宙':'#b18be8','反派':'#d76c77','新世代':'#65b9b1','其他':'#9aa8bd'};
+const groups={'復仇者':['tony','steve','nat','clint','bruce','thor','rhodey','sam','bucky','wanda','vision','fury'],'星際異攻隊':['quill','gamora','nebula','rocket','groot','drax','mantis','yondu'],'瓦干達':['tchalla','shuri','ramonda','okoye','mbaku','killmonger'],'蜘蛛人宇宙':['peter','may','mj','ned','vulture','mysterio','happy'],'魔法與宇宙':['loki','odin','hela','frigga','valkyrie','strange','wong','ancient'],'反派':['thanos','ultron','zemo','wenwu'],'新世代':['yelena','kate','kamala','monica','carol','scott','hope','shang'],'其他':['pepper','hank','janet','deadpool','wolverine','reed']};
+const centers={'復仇者':[280,210],'星際異攻隊':[790,170],'瓦干達':[790,440],'蜘蛛人宇宙':[500,525],'魔法與宇宙':[500,160],'反派':[500,345],'新世代':[260,450],'其他':[90,315]},pos={};
+for(const [g,ids] of Object.entries(groups))ids.forEach((id,i)=>{const a=i/ids.length*Math.PI*2-Math.PI/2;pos[id]=[centers[g][0]+Math.cos(a)*Math.min(115,ids.length*8+35),centers[g][1]+Math.sin(a)*Math.min(88,ids.length*6+25)]});
+const by=Object.fromEntries(P.map(p=>[p[0],p])),svg=document.querySelector('#graph'),NS='http://www.w3.org/2000/svg';let selected=null,q='',team='all',kind='all';
+function el(t,a={},v=''){const n=document.createElementNS(NS,t);Object.entries(a).forEach(([k,x])=>n.setAttribute(k,x));if(v)n.textContent=v;return n}
+function shown(p){return(team==='all'||p[3]===team)&&(!q||p.slice(1,4).join(' ').toLowerCase().includes(q))}
+function draw(){svg.innerHTML='';const ids=new Set(P.filter(shown).map(p=>p[0])),es=E.filter(e=>ids.has(e[0])&&ids.has(e[1])&&(kind==='all'||kind===e[3]));const eg=el('g');es.forEach(e=>{const a=pos[e[0]],b=pos[e[1]];eg.append(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'edge '+e[3]}));eg.append(el('text',{x:(a[0]+b[0])/2,y:(a[1]+b[1])/2-4,class:'edge-label'},e[2]))});svg.append(eg);const ng=el('g');P.filter(shown).forEach(p=>{const [x,y]=pos[p[0]],n=el('g',{class:'node'+(selected===p[0]?' selected':'')});if(selected&&!es.some(e=>(e[0]===selected&&e[1]===p[0])||(e[1]===selected&&e[0]===p[0]))&&selected!==p[0])n.classList.add('dim');n.append(el('circle',{cx:x,cy:y,r:selected===p[0]?17:13,fill:colors[p[3]]}));n.append(el('text',{x,y:y+29},p[1]));n.addEventListener('click',()=>select(p[0]));ng.append(n)});svg.append(ng);document.querySelector('#pc').textContent=ids.size;document.querySelector('#ec').textContent=es.length}
+function select(id){selected=id;const p=by[id],links=E.filter(e=>e[0]===id||e[1]===id);draw();const d=document.querySelector('#detail');d.innerHTML='<div class="kicker">'+p[3].toUpperCase()+' / CHARACTER PROFILE</div><h2>'+p[1]+'</h2><div class="english">'+p[2]+'</div><p>'+p[4]+'</p><span class="pill">'+p[3]+'</span><div class="section">代表作品</div><p>'+p[5]+'</p><div class="section">人物關係 · '+links.length+' 條</div><div id="rels"></div>';const box=d.querySelector('#rels');links.forEach(e=>{const other=by[e[0]===id?e[1]:e[0]],r=document.createElement('div');r.className='rel';r.innerHTML='<b>'+other[1]+'</b><small>'+e[2]+'</small>';r.onclick=()=>select(other[0]);box.append(r)})}
+function index(){const box=document.querySelector('#people');box.innerHTML='';P.filter(shown).forEach(p=>{const n=document.createElement('div');n.className='person';n.innerHTML='<b>'+p[1]+'</b><small>'+p[2]+' · '+p[3]+'</small>';n.onclick=()=>{select(p[0]);window.scrollTo({top:0,behavior:'smooth'})};box.append(n)})}
+document.querySelector('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();selected=null;draw();index()};document.querySelector('#team').onchange=e=>{team=e.target.value;selected=null;draw();index()};document.querySelector('#kind').onchange=e=>{kind=e.target.value;draw()};document.querySelector('#reset').onclick=()=>{q='';team=kind='all';selected=null;document.querySelector('#q').value='';document.querySelector('#team').value=document.querySelector('#kind').value='all';document.querySelector('#detail').innerHTML='<div class="kicker">CHARACTER PROFILE</div><h2>選擇一位角色</h2><p>點擊關係圖上的人物節點，查看角色背景、代表作品與直接人物關係。</p>';draw();index()};document.querySelector('#toggle').onclick=()=>{const n=document.querySelector('#index');n.style.display=n.style.display==='block'?'none':'block';index()};draw();index();
+</script></body></html>
